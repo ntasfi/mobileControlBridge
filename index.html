@@ -1,0 +1,123 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<title>Mobile</title>
+<style>
+div.container {
+  position: absolute;
+  top: 33%;
+  left: 37%;
+  margin: 0px;
+  padding: 0px;
+}
+
+div.h2 {
+  margin-top: 2px;
+}
+
+div.main {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  text-decoration: none;
+  background-color: none;
+  color: darkgrey;
+  padding: 5px;
+  border: 1.5px solid lightgrey;
+}
+
+#recalibrateDevice {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  text-decoration: none;
+  font-size: 24px;
+  background-color: lightgrey;
+  color: white;
+  font-weight: bolder;
+  padding: 5px;
+}
+
+table {
+  color: grey;
+}
+</style>
+</head>
+<body>
+<div class="main">
+  <h2>Debug Information</h2>
+  <table>
+    <tr>
+      <td>Measurment [alpha]</td>
+      <td id="alphaMeasurment"></td>
+    </tr>
+    <tr>
+      <td>Measurment [beta]</td>
+      <td id="betaMeasurment"></td>
+    </tr>    
+    <tr>
+      <td>Measurment [gamma]</td>
+      <td id="gammaMeasurment"></td>
+    </tr>
+    <tr>
+      <td>Calibration [alpha]</td>
+      <td id="alphaCalibration"></td>
+    </tr>
+    <tr>
+      <td>Calibration [beta]</td>
+      <td id="betaCalibration"></td>
+    </tr>
+    <tr>
+      <td>Calibration [gamma]</td>
+      <td id="gammaCalibration"></td>
+    </tr>
+   </table>
+</div>
+
+<ul id="log">
+</ul>
+
+<a href="#" onclick="mCB.recalibrateDevice()" id="recalibrateDevice">Recalibrate Device</a>
+
+<div class="container">
+  <img src="./phone.png" id="imgLogo" class="logo">
+</div>
+
+</body>
+<script src="./mobileControlBridge.js"></script>
+<script>
+
+if (typeof mobileControlBridge != "undefined") {
+	var mCB = mobileControlBridge.getInstance();
+
+	if (mCB.checkBrowserSupport()) {
+		mCB.start(); //kick it off
+	} else {
+		console.log(mCB.isBrowserSupported());
+		console.log("Browser is not supported.");
+	}
+} else {
+	console.log("Could not find mobileControlBridge");
+}
+
+window.addEventListener("keydown", function(event) {
+  switch(event.which) {
+    case 40:
+      console.log("Simulated down"); 
+      break;   
+    case 38:
+      console.log("Simulated up"); 
+      break;   
+    case 39:
+      console.log("Simulated right"); 
+      break;   
+    case 37:
+      console.log("Simulated left");
+      break;
+    default:
+      console.log("default yo");
+      break;
+  }//end switchs
+}, false);
+</script>
+</html>
