@@ -41,7 +41,7 @@ Then add whatever mappings you want to to the settings.mappings object within *m
 
 The root key, in this case Alpha, is case sensitive. This tells the lib to watch the Alpha motion event on the device.
 
-You can have up to two keys added. Results might be wonky if you have more then two key as one magnitude is tested as gte and the other is lte.
+You can have up to two keys added. Results might be wonky if you have more then two keys as the magnitude is tested differently based on the sign. There is no support for ranges yet (eg. simulate 39 if in range +15 to +30)
 
 If you want to have debugging, just uncomment the following line:
 
