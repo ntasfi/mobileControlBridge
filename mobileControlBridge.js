@@ -179,7 +179,7 @@ var mobileControlBridge = (function() {
           measurements.Alpha = hasChangedAndTrigger(measurements.Alpha, Alpha, 'Alpha');
           measurements.Beta = hasChangedAndTrigger(measurements.Beta, Beta, 'Beta');
           measurements.Gamma = hasChangedAndTrigger(measurements.Gamma, Gamma, 'Gamma');
-          updateVisuals(measurements.Alpha, measurements.Beta, measurements.Gamma); //update our pretty visuals
+          //updateVisuals(measurements.Alpha, measurements.Beta, measurements.Gamma); //update our pretty visuals
         }, false);
         return true;
       } else {
