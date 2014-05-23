@@ -1,3 +1,9 @@
+##What?
+
+Allows you to map motions on mobile devices, such as the iPad or iPhone, to keys presses. Makes it easy to add mobile device support to web games.
+
+This was done as quick weekend project, if you have any suggestions on coding style, structure or how I could improve I'd love to hear them.
+
 ##Setup
 
 Add the following to any html page.

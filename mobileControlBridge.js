@@ -71,35 +71,6 @@ var mobileControlBridge = (function() {
         Gamma: null
     };
 
-    // /*
-    // * Goes through and creates keyboard event objects for each key.
-    // *
-    // * Some code used from: http://stackoverflow.com/questions/596481/simulate-javascript-key-events
-    // * Thanks to Philip Nuzhnyy.
-    // */
-    // function createEvents() {
-    //   for(map in settings.mappings) {
-    //     for(key in settings.mappings[map].Keys) {
-    //       var keyboardEvent = document.createEvent("KeyboardEvent");
-    //       var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-
-    //       keyboardEvent[initMethod](
-    //         map.Type, // event type : keydown, keyup, keypress
-    //         true, // bubbles
-    //         true, // cancelable
-    //         window, // viewArg: should be window
-    //         false, // ctrlKeyArg
-    //         false, // altKeyArg
-    //         false, // shiftKeyArg
-    //         false, // metaKeyArg
-    //         key.KeyCode, // keyCodeArg : unsigned long the virtual key code, else 0
-    //         0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-    //       );
-    //       settings.mappings[map].Keys[key].eventObj = keyboardEvent; //save it
-    //     }
-    //   }
-    // };
-
     function __triggerKeyEvent(keyCode, type) {
         var eventObj = document.createEventObject ?
             document.createEventObject() : document.createEvent("Events");
@@ -125,8 +96,10 @@ var mobileControlBridge = (function() {
     function checkTriggerMagnitude(TriggerMagnitude, value) {
       if(TriggerMagnitude >= 0) { //gte
         return (value >= TriggerMagnitude)
-      } else { //lte
+      } else if(TriggerMagnitude < 0) { //lte
         return (value <= TriggerMagnitude)
+      } else {
+        //how'd you get here?!
       }
     } //end checkTriggerMagnitude
 
