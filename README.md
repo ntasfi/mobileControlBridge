@@ -21,7 +21,7 @@ if (typeof mobileControlBridge != "undefined") {
 </script>
 ```
 
-Then add the mappings you want to watch for within *mobileControlBridge.js*. The layout for each map is as such:
+Then add whatever mappings you want to to the settings.mappings object within *mobileControlBridge.js*, starting after line 17. The form for each map is as such:
 
 ```javascript
 "Alpha": { //has to be one of the keys from the measurments object (Alpha, Beta, Gamma, X, Y, Z)
@@ -38,6 +38,8 @@ Then add the mappings you want to watch for within *mobileControlBridge.js*. The
   ] //end keys
 } //end Alpha
 ```
+
+The root key, in this case Alpha, is case sensitive. This tells the lib to watch the Alpha motion event on the device.
 
 You can have up to two keys added. Results might be wonky if you have more then two key as one magnitude is tested as gte and the other is lte.
 
