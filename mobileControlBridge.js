@@ -14,7 +14,20 @@ var mobileControlBridge = (function() {
 
   function init() { //private methods and variables
     var settings = {
+      enableGestures: true,
+      gestureErrorThreshold: 1,
+      maxMeasurmentsMemory: 30,
+      watchGestures: ["Rock"],
       mappings: {
+        "Rock": {
+          Type: "keydown",
+          Keys: [
+            KeyCode: 39, //right
+            TriggerMagnitudes: {
+              "Gamma": [100, 120, 100, 120]
+            },
+          ]
+        }, //end rock
         "Alpha": { //has to be one of the keys from the measurments object
           Type: "keydown", //what kind of event do you want to be triggered?
           Keys: [ //an array of key objects
@@ -71,7 +84,89 @@ var mobileControlBridge = (function() {
         Gamma: null
     };
 
-    function __triggerKeyEvent(keyCode, type) {
+    var measurementsMemory = {
+        X: [],
+        Y: [],
+        Z: [],
+        Alpha: [],
+        Beta: [],
+        Gamma: []
+    };
+
+    ///////////////////////////
+    //start gesture functions
+    ///////////////////////////
+
+    //records a gesture
+    function recordGesture() {
+
+    }
+
+
+    //mean squared error
+    function MSE(estimate, actual) {
+      var error = 0;
+
+      if(estimate.length != actual.length) {
+        error = 999999; //this is a quick way to make it fail. We could return a negative but we would have to check.
+        return error;
+      }
+
+      for (var i = 0; i < estimate.length; i++) {
+          var diff = estimate[i]-actual[i];
+          error += Math.pow(diff, 2);
+      }
+      return error/estimate.length;
+    }
+
+    //mean absolute error
+    function MAE(estimate, actual) {
+      var error = 0;
+
+      if(estimate.length != actual.length) {
+        error = 999999; //this is a quick way to make it fail. We could return a negative but we would have to check.
+        return error;
+      }
+
+      for (var i = 0; i < estimate.length; i++) {
+          var diff = estimate[i]-actual[i];
+          error += Math.abs(diff);
+      }
+      return error/estimate.length;
+    }
+
+    //we can use different error functions instead of MSE down the road.
+    function errorFunction(estimate, actual) {
+      return MSE(estimate, actual);
+    }
+
+    function errorOfGestureAndMeasurment(gestureName) {
+      //for each channel we want to compare against from the gesture
+      var errorMeasurmentsGesture = 0;
+      for (var key in settings.mappings[gestureName].Keys.TriggerMagnitudes) {
+        var actual = settings.mappings[gestureName].Keys.TriggerMagnitudes[key];
+        var estimate = measurementsMemory[key]
+        errorMeasurmentsGesture += errorFunction(estimate, actual);
+      }
+      var numberOfChannels = keys(settings.mappings[gestureName].Keys.TriggerMagnitudes).length;
+      errorMeasurmentsGesture = errorMeasurmentsGesture/numberOfChannels;
+      return errorMeasurmentsGesture;
+    }
+
+    //this checks if the gesture has occured.
+    function checkForGestures() {
+      for(var key in settings.watchGestures) {
+        if(errorOfGestureAndMeasurment(key) < settings.gestureErrorThreshold) {
+          triggerKeyEventWith(settings.mappings[key].Keys[0].KeyCode, settings.mappings[key].Type);
+        }
+      }
+    }
+
+    ///////////////////////////
+    //end gesture functions
+    ///////////////////////////
+
+    function triggerKeyEventWith(keyCode, type) {
         var eventObj = document.createEventObject ?
             document.createEventObject() : document.createEvent("Events");
       
@@ -109,12 +204,20 @@ var mobileControlBridge = (function() {
 
     */
     function hasChangedAndTrigger(previousValue, newValue, eventName) {
+      //add it to the memory
+      if(enableGestures) {
+        measurementsMemory[eventName].push(newValue);
+        if(measurementsMemory[eventName].length > maxMeasurmentsMemory) {
+          measurementsMemory[eventName].shift();
+        }
+        checkForGestures();
+      }
+
       if (settings.mappings[eventName]) {//if there is a binding for this event
-        for(key in settings.mappings[eventName].Keys) { //for each key
+        for(var key in settings.mappings[eventName].Keys) { //for each key
           var thisKey = settings.mappings[eventName].Keys[key];
           if (checkTriggerMagnitude(thisKey.TriggerMagnitude, newValue)) { //check the threshold
-            //document.dispatchEvent(thisKey.eventObj); //trigger the event
-            __triggerKeyEvent(thisKey.KeyCode, settings.mappings[eventName].Type)
+            triggerKeyEventWith(thisKey.KeyCode, settings.mappings[eventName].Type)
           }; //end if
         } //end for
       } //end if
@@ -160,6 +263,7 @@ var mobileControlBridge = (function() {
       }
     }; //end bindPolling
 
+    //clears the calibration that we have saved for the device
     function clearCalibrations() {
         //clear
         for(var i in calibration) {
@@ -266,6 +370,11 @@ var mobileControlBridge = (function() {
   return {
     //public methods and variables
     mappings: settings.mappings,
+
+    toggleGestureEnable: function() {
+      enableGestures = enableGestures == true ? false:true;
+      return enableGestures //we can see it now
+    },
 
     addMapping: function(eventObj, eventName) {
       settings.mappings[eventName] = eventObj;
